@@ -18,20 +18,20 @@ Virtual environments enable us to have an isolated space on our server for Pytho
 1. Open terminal (press ctrl + alt + T).
 2. Change directory to Project.
 
-```cd Project```
+    ```cd Project```
 
 3. Install venv.
 
-```sudo apt install -y python3-venv```
+    ```sudo apt install -y python3-venv```
 
 4. Venv is installed now. Now we will create a virtual environment.
 5. Type "python3 -m venv name" and press enter. You can give the name of your virtual environment in place of "name". Suppose you want name of your virtual environment as qube_venv. So you have to type "python3 -m venv qube_venv".
 
-```python3 -m venv qube_venv```
+    ```python3 -m venv qube_venv```
 
 6. Final step is to activate your virtual environment. 
 
-```source qube_venv/bin/activate```
+    ```source qube_venv/bin/activate```
 
 7. Now, your terminal will be prefixed with the name of your virtual environment.
 
