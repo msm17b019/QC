@@ -20,6 +20,7 @@ class Vpc:
             self.myvpc = self.ec2_resource.create_vpc(CidrBlock=cidr)
             self.myvpc.create_tags(Tags=tags)
             self.myvpc.wait_until_available()
+            self.myvpc_id = self.myvpc.id
 
     def check_virtual_private_cloud(self, tags: list, cidr: str) -> bool:
         """This method checks if the virtual private cloud exists with given name and tags.
@@ -33,12 +34,13 @@ class Vpc:
         """
         for vpc in self.ec2_client.describe_vpcs()['Vpcs']:
             if cidr == vpc['CidrBlock'] and vpc['Tags'] == tags:
+                self.myvpc_id = vpc['VpcId']
                 return False
         else:
             return True
 
-    def create_internet_gateway(self, tags: list) -> None:
-        """This method creates an internet gateway with the given tags.
+    def create_and_attach_internet_gateway(self, tags: list) -> None:
+        """This method creates and attaches an internet gateway with the vpc created.
 
         Args:
             tags (list): tags to add to an internet gateway.
@@ -46,6 +48,10 @@ class Vpc:
         if self.check_internet_gateway(tags):
             self.igw = self.ec2_resource.create_internet_gateway()
             self.igw.create_tags(Tags=tags)
+            self.igw_id = self.igw.id
+
+        if self.check_igw_attached_to_vpc():
+            self.ec2_client.attach_internet_gateway(InternetGatewayId=self.igw_id, VpcId=self.myvpc_id)
 
     def check_internet_gateway(self, tags: list) -> bool:
         """This method checks if an internet gateway exists with the given tags.
@@ -55,6 +61,15 @@ class Vpc:
         """
         for igw in self.ec2_client.describe_internet_gateways()['InternetGateways']:
             if tags == igw['Tags']:
+                self.igw_id = igw['InternetGatewayId']
                 return False
         else:
             return True
+
+    def check_igw_attached_to_vpc(self):
+        for igw in self.ec2_client.describe_internet_gateways()['InternetGateways']:
+            if self.igw_id == igw['InternetGatewayId']:
+                if igw['Attachments'] == []:
+                    return True
+                else:
+                    return False
