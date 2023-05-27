@@ -30,10 +30,10 @@ class Vpc:
             cidr (str): CIDR block
 
         Returns:
-            bool: True if it exists. False if it doesn't. 
+            bool: False if it exists. True if it doesn't. 
         """
         for vpc in self.ec2_client.describe_vpcs()['Vpcs']:
-            if cidr == vpc['CidrBlock'] and vpc['Tags'] == tags:
+            if cidr == vpc['CidrBlock'] and tags[0] in vpc['Tags'] and tags[1] in vpc['Tags']:
                 self.myvpc_id = vpc['VpcId']
                 return False
         else:
@@ -60,16 +60,86 @@ class Vpc:
             tags (list): tags to find if the internet gateway exists with the same tags.
         """
         for igw in self.ec2_client.describe_internet_gateways()['InternetGateways']:
-            if tags == igw['Tags']:
+            if tags[0] in igw['Tags'] and tags[1] in igw['Tags']:
                 self.igw_id = igw['InternetGatewayId']
                 return False
         else:
             return True
 
-    def check_igw_attached_to_vpc(self):
+    def check_igw_attached_to_vpc(self) -> bool:
+        """This method checks if internet gateway is attached to vpc or not.
+
+        Returns:
+            bool: False if internet gateway is attached to vpc, else True.
+        """
         for igw in self.ec2_client.describe_internet_gateways()['InternetGateways']:
             if self.igw_id == igw['InternetGatewayId']:
                 if igw['Attachments'] == []:
                     return True
                 else:
                     return False
+        else:
+            return False
+                
+    def create_public_route_table(self, tags: list) -> None:
+        """This method creates public route table.
+
+        Args:
+            tags (list): Tags to add to the public route table
+        """
+        if self.check_public_route_table(tags):
+            self.public_rt = self.ec2_resource.create_route_table(VpcId=self.myvpc_id)
+            self.public_rt.create_tags(Tags=tags)
+            self.public_rt_id = self.public_rt.id
+            self.public_rt.create_route(
+                DestinationCidrBlock='0.0.0.0/0',
+                GatewayId=self.igw_id
+            )
+
+    def check_public_route_table(self, tags: list) -> bool:
+        """This method checks whether public route table is created or not.
+
+        Args:
+            tags (list): Tags to find the route table created.
+
+        Returns:
+            bool: False if public route table exists, else True.
+        """
+        for prt in self.ec2_client.describe_route_tables()['RouteTables']:
+            if tags[0] in prt['Tags'] and tags[1] in prt['Tags']:
+                self.public_rt_id = prt['RouteTableId']
+                return False
+        else:
+            return True
+        
+    def create_public_subnet(self, cidr: str, availability_zone: str, tags: list) -> None:
+        """This method creates public subnet.
+
+        Args:
+            cidr (str): The CIDR block of subnet.
+            availability_zone (str): Subnet will be created in that AZ.
+            tags (list): Tags to add to the subnet.
+        """
+
+        if self.check_public_subnet(tags):
+            self.public_subnet = self.ec2_resource.create_subnet(CidrBlock=cidr, VpcId=self.myvpc_id,AvailabilityZone=availability_zone)
+            self.public_subnet.create_tags(Tags=tags)
+            self.ec2_client.associate_route_table(RouteTableId=self.public_rt_id, SubnetId=self.public_subnet.id)
+
+    def check_public_subnet(self, tags: list) -> bool:
+        """This method checks if public subnet exists.
+
+        Args:
+            cidr (str): The CIDR block of subnet.
+            availability_zone (str): Subnet availability zone.
+            tags (list): Tags of the subnet.
+
+        Returns:
+            bool: False if public subnet exists, else True.
+        """
+        for pub_subnet in self.ec2_client.describe_subnets()['Subnets']:
+            if pub_subnet['VpcId'] == self.myvpc_id:
+                if tags[0] in pub_subnet['Tags'] and tags[1] in pub_subnet['Tags']:
+                    return False
+        else:
+            return True
