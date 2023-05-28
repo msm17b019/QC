@@ -182,4 +182,35 @@ class Vpc:
         else:
             return True
         
+    def create_private_route_table(self, tags: list) -> None:
+        """This method creates a private route table.
+
+        Args:
+            tags (list): Tags to add to the private route table.
+        """
+        if self.check_private_route_table(tags):
+            self.private_rt = self.ec2_resource.create_route_table(VpcId=self.myvpc_id)
+            self.private_rt.create_tags(Tags=tags)
+            self.private_rt_id = self.private_rt.id
+            self.private_rt.create_route(
+                DestinationCidrBlock='0.0.0.0/0',
+                NatGatewayId=self.nat_gw_id
+            )
+
+    def check_private_route_table(self, tags: list) -> bool:
+        """This method checks whether private route table is created or not.
+
+        Args:
+            tags (list): Tags to find the route table created.
+
+        Returns:
+            bool: False if private route table exists, else True.
+        """
+        for prt in self.ec2_client.describe_route_tables()['RouteTables']:
+            if tags[0] in prt['Tags'] and tags[1] in prt['Tags']:
+                self.private_rt_id = prt['RouteTableId']
+                return False
+        else:
+            return True
+        
 
