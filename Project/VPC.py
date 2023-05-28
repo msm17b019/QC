@@ -143,3 +143,43 @@ class Vpc:
                     return False
         else:
             return True
+        
+    def create_nat_gateway(self, tags: list) -> None:
+        """This method creates an NAT gateway.
+
+        Args:
+            tags (list): tags to add to the nat gateway.
+        """
+        if self.check_nat_gateway(tags):
+            elastic_ip = self.ec2_client.allocate_address(Domain='vpc', TagSpecifications=[{'ResourceType': 'elastic-ip', 'Tags': tags},])
+            for pub_subnet in self.ec2_client.describe_subnets()['Subnets']:
+                if pub_subnet['VpcId'] == self.myvpc_id:
+                    if {'Key': 'Name', 'Value': 'QubePublicSubnet1'} in pub_subnet['Tags'] and {'Key': 'Product', 'Value': 'challenge'} in pub_subnet['Tags']:
+                        self.pub_sub1_id = pub_subnet['SubnetId']
+                        break
+            tags = tags + [{'Key': 'Name', 'Value': 'QubeNG'}]
+            self.nat_gw = self.ec2_client.create_nat_gateway(SubnetId=self.pub_sub1_id, AllocationId=elastic_ip['AllocationId'], TagSpecifications=[{'ResourceType': 'natgateway', 'Tags': tags},])
+            self.ec2_client.get_waiter('nat_gateway_available').wait(
+                NatGatewayIds=[self.nat_gw['NatGateway']['NatGatewayId']])
+            self.nat_gw_id = self.nat_gw['NatGateway']['NatGatewayId']
+
+    def check_nat_gateway(self, tags: list) -> bool:
+        """This method checks if NAT gateway is already created.
+
+        Args:
+            tags (list): Tags to find if the NAT already created.
+
+        Returns:
+            bool: False if NAT exists, else True.
+        """
+        tags_to_find = []
+        tags_to_find = tags.copy()
+        tags_to_find = tags_to_find + [{'Key': 'Name', 'Value': 'QubeNG'}]
+        for ng in self.ec2_client.describe_nat_gateways()['NatGateways']:
+            if tags_to_find[0] in ng['Tags'] and tags_to_find[1] in ng['Tags']:
+                self.nat_gw_id = ng['NatGatewayId']
+                return False
+        else:
+            return True
+        
+
