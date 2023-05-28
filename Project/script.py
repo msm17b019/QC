@@ -1,9 +1,10 @@
 import boto3
 from VPC import Vpc
-
+from SQS import Sqs
 
 ec2_resource = boto3.resource("ec2")
 ec2_client = boto3.client("ec2")
+sqs_resource = boto3.resource("sqs")
 
 qube_vpc = Vpc(ec2_resource, ec2_client)
 
@@ -26,3 +27,6 @@ qube_vpc.create_private_subnet("172.20.3.0/24", "ap-south-1c", [{'Key': 'Name', 
 alb_sgid = qube_vpc.create_alb_security_group("QubeAlbSG", "Security group for ALB", [{'Key': 'Product', 'Value': 'challenge'}])
 
 asg_sgid = qube_vpc.create_asg_security_group("QubeAsgSG", "Security group for ASG", [{'Key': 'Product', 'Value': 'challenge'}])
+
+qube_sqs = Sqs(sqs_resource)
+qube_sqs.create_sqs_queue("QubeSQS", {'Key': 'Product', 'Value': 'challenge'})
