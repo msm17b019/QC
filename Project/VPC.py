@@ -213,4 +213,34 @@ class Vpc:
         else:
             return True
         
+    def create_private_subnet(self, cidr: str, availability_zone: str, tags: list) -> None:
+        """This method creates private subnet.
 
+        Args:
+            cidr (str): The CIDR block of subnet.
+            availability_zone (str): Subnet will be created in that AZ.
+            tags (list): Tags to add to the subnet.
+        """
+
+        if self.check_private_subnet(tags):
+            self.private_subnet = self.ec2_resource.create_subnet(CidrBlock=cidr, VpcId=self.myvpc_id,AvailabilityZone=availability_zone)
+            self.private_subnet.create_tags(Tags=tags)
+            self.ec2_client.associate_route_table(RouteTableId=self.private_rt_id, SubnetId=self.private_subnet.id)
+
+    def check_private_subnet(self, tags: list) -> bool:
+        """This method checks if private subnet exists.
+
+        Args:
+            cidr (str): The CIDR block of subnet.
+            availability_zone (str): Subnet availability zone.
+            tags (list): Tags of the subnet.
+
+        Returns:
+            bool: False if private subnet exists, else True.
+        """
+        for private_subnet in self.ec2_client.describe_subnets()['Subnets']:
+            if private_subnet['VpcId'] == self.myvpc_id:
+                if tags[0] in private_subnet['Tags'] and tags[1] in private_subnet['Tags']:
+                    return False
+        else:
+            return True

@@ -20,3 +20,5 @@ qube_vpc.create_public_subnet("172.20.2.0/24", "ap-south-1b", [{'Key': 'Name', '
 qube_vpc.create_nat_gateway([{'Key': 'Product', 'Value': 'challenge'}])
 
 qube_vpc.create_private_route_table([{'Key': 'Name', 'Value': 'QubePrivateRT'}, {'Key': 'Product', 'Value': 'challenge'}])
+
+qube_vpc.create_private_subnet("172.20.3.0/24", "ap-south-1c", [{'Key': 'Name', 'Value': 'QubePrivateSubnet1'}, {'Key': 'Product', 'Value': 'challenge'}])
