@@ -1,6 +1,6 @@
 class Vpc:
     def __init__(self, ec2_resource, ec2_client):
-        """ Class that respresents Amazon VPC
+        """ Class that represents Amazon VPC service
 
         Args:
             ec2_resource : EC2 resource to create, manage and configure AWS EC2 service at high level
