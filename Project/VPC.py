@@ -297,7 +297,7 @@ class Vpc:
             return True
         
     def create_asg_security_group(self, name: str, desc: str, tags: list) -> str:
-        """This method creates security group for application load balancer.
+        """This method creates security group for autoscaling group.
 
         Args:
             name (str): Name of the security group.
