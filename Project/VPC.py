@@ -244,3 +244,108 @@ class Vpc:
                     return False
         else:
             return True
+
+    def create_alb_security_group(self, name: str, desc: str, tags: list) -> str:
+        """This method creates security group for application load balancer.
+
+        Args:
+            name (str): Name of the security group.
+            desc (str): Description for the security group.
+            tags (list): Tags to add to the security group.
+
+        Returns:
+            str: The security group id.
+        """
+        if self.check_alb_security_group(name):
+            sg = self.ec2_client.create_security_group(
+                GroupName=name,
+                Description=desc,
+                VpcId=self.myvpc_id,
+                TagSpecifications=[{'ResourceType': 'security-group', 'Tags': tags},]
+            )
+
+            self.group_id = sg['GroupId']
+
+            self.ec2_client.authorize_security_group_ingress(
+                GroupId=self.group_id,
+                IpPermissions=[
+                    {
+                        'IpProtocol': 'tcp',
+                        'FromPort': 80,
+                        'ToPort': 80,
+                        'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
+                    }
+                ]
+            )
+            return self.group_id
+
+    
+    def check_alb_security_group(self, name: str) -> bool:
+        """This method checks if security group is there for alb or not.
+
+        Args:
+            name (str): Name of the security group to check.
+
+        Returns:
+            bool: False if alb security group exists, else True.
+        """
+        for sg in self.ec2_client.describe_security_groups()['SecurityGroups']:
+            if sg['GroupName'] == name:
+                self.group_id = sg['GroupId']
+                return False
+        else:
+            return True
+        
+    def create_asg_security_group(self, name: str, desc: str, tags: list) -> str:
+        """This method creates security group for application load balancer.
+
+        Args:
+            name (str): Name of the security group.
+            desc (str): Description for the security group.
+            tags (list): Tags to add to the security group.
+
+        Returns:
+            str: The security group id.
+        """
+        if self.check_asg_security_group(name):
+            sg = self.ec2_client.create_security_group(
+                GroupName=name,
+                Description=desc,
+                VpcId=self.myvpc_id,
+                TagSpecifications=[{'ResourceType': 'security-group', 'Tags': tags},]
+            )
+
+            self.asg_sgid = sg['GroupId']
+
+            self.ec2_client.authorize_security_group_ingress(
+                GroupId=self.asg_sgid,
+                IpPermissions=[
+                    {
+                        'IpProtocol': 'tcp',
+                        'FromPort': 80,
+                        'ToPort': 80, 
+                        'UserIdGroupPairs': [
+                            {
+                                'GroupId': self.group_id
+                            }
+                        ]
+                    }
+                ]
+            )
+            return self.asg_sgid
+    
+    def check_asg_security_group(self, name: str) -> bool:
+        """This method checks if security group is there for asg or not.
+
+        Args:
+            name (str): Name of the security group to check.
+
+        Returns:
+            bool: False if asg security group exists, else True.
+        """
+        for sg in self.ec2_client.describe_security_groups()['SecurityGroups']:
+            if sg['GroupName'] == name:
+                self.asg_sgid = sg['GroupId']
+                return False
+        else:
+            return True
