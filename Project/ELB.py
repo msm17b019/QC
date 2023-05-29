@@ -15,6 +15,7 @@ class Elb:
             pub_sub (list): Public subnets.
             tags (list): Tags to add to the load balancers.
             elb_sg (str): Security group ID.
+            vpc_id (str): VPC ID.
         """
         if self.check_elb(name):
             response1 = self.elbv2_client.create_load_balancer(
