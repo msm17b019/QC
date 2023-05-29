@@ -1,10 +1,17 @@
 import boto3
 from VPC import Vpc
 from SQS import Sqs
+from ASG import Asg
+from EC2 import Ec2
+from IAM import Iam
+from ELB import Elb
 
 ec2_resource = boto3.resource("ec2")
 ec2_client = boto3.client("ec2")
 sqs_resource = boto3.resource("sqs")
+as_client = boto3.client("autoscaling")
+elbv2_client = boto3.client("elbv2")
+iam_client = boto3.client("iam")
 
 qube_vpc = Vpc(ec2_resource, ec2_client)
 
@@ -30,3 +37,7 @@ asg_sgid = qube_vpc.create_asg_security_group("QubeAsgSG", "Security group for A
 
 qube_sqs = Sqs(sqs_resource)
 qube_sqs.create_sqs_queue("QubeSQS", {'Key': 'Product', 'Value': 'challenge'})
+
+qube_iam = Iam(iam_client)
+qube_iam.create_instance_profile("QubeIP", [{'Key': 'Product', 'Value': 'challenge'}])
+qube_iam.create_add_iam_policy_to_role("QubePolicy", [{'Key': 'Product', 'Value': 'challenge'}], "461338057834", "", "QubeASG")
