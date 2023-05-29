@@ -7,13 +7,21 @@ class Ec2:
         """
         self.ec2_client=ec2_client
 
-    def create_launch_template(self, name: str, tags: list, sg: list, pvt_sub: str):
-        self.ec2_client.create_launch_template(
+    def create_launch_template(self, name: str, iam_ip_name: str, tags: list, sg: list, pvt_sub: str):
+        """This method creates launch template.
+
+        Args:
+            name (str): Name of the launch template.
+            iam_ip_name (str): IAM instance profile.
+            tags (list): tags to add to the launch template.
+            sg (list): security groups.
+            pvt_sub (str): private subnet.
+        """
+        self.lt = self.ec2_client.create_launch_template(
             LaunchTemplateName=name,
             LaunchTemplateData={
                 'IamInstanceProfile': {
-                    'Arn': 'string',
-                    'Name': 'string'
+                    'Name': iam_ip_name
                 },
                 'NetworkInterfaces': [
                     {
@@ -25,11 +33,10 @@ class Ec2:
                     },
                 ],
                 'ImageId': 'ami-078efad6f7ec18b8a',
-                'KeyName': 'string',
                 'Monitoring': {
                     'Enabled': False
                 },
-                'UserData': 'string',
+                'UserData': 'IyEvYmluL2Jhc2gKeXVtIHVwZGF0ZSAteQp5dW0gaW5zdGFsbCAteSBodHRwZAplY2hvICJoZWxsb3dvcmxkIiA+IC9vcHQvbGF1bmNoZmlsZQplY2hvICJIZWxsbyB3b3JsZCBweXRob24iID4gL3Zhci93d3cvaHRtbC9pbmRleC5odG1sCnNlcnZpY2UgaHR0cGQgc3RhcnQK',
                 'TagSpecifications': [
                     {
                         'ResourceType': 'launch-template',
@@ -57,3 +64,21 @@ class Ec2:
                 },
             ]
         )
+
+        self.lt_id = self.lt['LaunchTemplate']['LaunchTemplateId']
+
+    def check_launch_template(self, name: str) -> bool:
+        """This method checks if launch template exists with the given name.
+
+        Args:
+            name (str): The name of the launch template to find.
+
+        Returns:
+            bool: Return False if launch template with the given name exists, else True.
+        """
+        for lt in self.ec2_client.describe_launch_templates():
+            if name == lt['LaunchTemplates']['LaunchTemplateName']:
+                self.lt_id = lt['LaunchTemplates']['LaunchTemplateId']
+                return False
+        else:
+            return True
