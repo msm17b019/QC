@@ -17,55 +17,56 @@ class Ec2:
             sg (list): security groups.
             pvt_sub (str): private subnet.
         """
-        self.lt = self.ec2_client.create_launch_template(
-            LaunchTemplateName=name,
-            LaunchTemplateData={
-                'IamInstanceProfile': {
-                    'Name': iam_ip_name
-                },
-                'NetworkInterfaces': [
-                    {
-                        'AssociatePublicIpAddress': False,
-                        'Groups': [
-                            sg,
-                        ],
-                        'SubnetId': pvt_sub,
+        if self.check_launch_template(name):
+            self.lt = self.ec2_client.create_launch_template(
+                LaunchTemplateName=name,
+                LaunchTemplateData={
+                    'IamInstanceProfile': {
+                        'Name': iam_ip_name
                     },
-                ],
-                'ImageId': 'ami-078efad6f7ec18b8a',
-                'Monitoring': {
-                    'Enabled': False
+                    'NetworkInterfaces': [
+                        {
+                            'AssociatePublicIpAddress': False,
+                            'Groups': [
+                                sg,
+                            ],
+                            'SubnetId': pvt_sub,
+                        },
+                    ],
+                    'ImageId': 'ami-078efad6f7ec18b8a',
+                    'Monitoring': {
+                        'Enabled': False
+                    },
+                    'UserData': 'IyEvYmluL2Jhc2gKeXVtIHVwZGF0ZSAteQp5dW0gaW5zdGFsbCAteSBodHRwZAplY2hvICJoZWxsb3dvcmxkIiA+IC9vcHQvbGF1bmNoZmlsZQplY2hvICJIZWxsbyB3b3JsZCBweXRob24iID4gL3Zhci93d3cvaHRtbC9pbmRleC5odG1sCnNlcnZpY2UgaHR0cGQgc3RhcnQK',
+                    'TagSpecifications': [
+                        {
+                            'ResourceType': 'launch-template',
+                            'Tags': tags
+                        },
+                    ],
+                    'SecurityGroupIds': [
+                        sg,
+                    ],
+                    'InstanceRequirements': {
+                        'VCpuCount': {
+                            'Min': 2,
+                            'Max': 2
+                        },
+                        'MemoryMiB': {
+                            'Min': 4000,
+                            'Max': 4200
+                        },
+                    },
                 },
-                'UserData': 'IyEvYmluL2Jhc2gKeXVtIHVwZGF0ZSAteQp5dW0gaW5zdGFsbCAteSBodHRwZAplY2hvICJoZWxsb3dvcmxkIiA+IC9vcHQvbGF1bmNoZmlsZQplY2hvICJIZWxsbyB3b3JsZCBweXRob24iID4gL3Zhci93d3cvaHRtbC9pbmRleC5odG1sCnNlcnZpY2UgaHR0cGQgc3RhcnQK',
-                'TagSpecifications': [
+                TagSpecifications=[
                     {
                         'ResourceType': 'launch-template',
                         'Tags': tags
                     },
-                ],
-                'SecurityGroupIds': [
-                    sg,
-                ],
-                'InstanceRequirements': {
-                    'VCpuCount': {
-                        'Min': 2,
-                        'Max': 2
-                    },
-                    'MemoryMiB': {
-                        'Min': 4000,
-                        'Max': 4200
-                    },
-                },
-            },
-            TagSpecifications=[
-                {
-                    'ResourceType': 'launch-template',
-                    'Tags': tags
-                },
-            ]
-        )
+                ]
+            )
 
-        self.lt_id = self.lt['LaunchTemplate']['LaunchTemplateId']
+            self.lt_id = self.lt['LaunchTemplate']['LaunchTemplateId']
 
     def check_launch_template(self, name: str) -> bool:
         """This method checks if launch template exists with the given name.
