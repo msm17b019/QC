@@ -16,7 +16,7 @@ class Elb:
             tags (list): Tags to add to the load balancers.
             elb_sg (str): Security group ID.
         """
-        if self.checl_elb(name):
+        if self.check_elb(name):
             self.elbv2_client.create_load_balancer(
                 Name=name,
                 Subnets=pub_sub,
@@ -29,7 +29,7 @@ class Elb:
                 IpAddressType='ipv4',
             )
 
-    def checl_elb(self, name) -> bool:
+    def check_elb(self, name) -> bool:
         """This method check if load balancer is created or not.
 
         Args:
