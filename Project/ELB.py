@@ -7,7 +7,7 @@ class Elb:
         """
         self.elbv2_client = elbv2_client
 
-    def create_elb(self, name: str, pub_sub: list, tags: list, elb_sg: str, vpc_id: str):
+    def create_elb(self, name: str, pub_sub: list, tags: list, elb_sg: str, vpc_id: str) -> str:
         """This method creates application load balancer.
 
         Args:
@@ -16,6 +16,9 @@ class Elb:
             tags (list): Tags to add to the load balancers.
             elb_sg (str): Security group ID.
             vpc_id (str): VPC ID.
+
+        Returns:
+            str: Return the target group arn.
         """
         if self.check_elb(name):
             response1 = self.elbv2_client.create_load_balancer(
@@ -49,7 +52,7 @@ class Elb:
             )
             self.target_group_arn = response3['TargetGroups'][0]['TargetGroupArn']
 
-            response4 = self.elbv2_client.create_rule(
+            self.elbv2_client.create_rule(
                 ListenerArn=self.listener_arn,
                 Conditions=[
                     {
@@ -66,6 +69,7 @@ class Elb:
                     }
                 ]
             )
+        return self.target_group_arn
 
     def check_elb(self, name) -> bool:
         """This method check if load balancer is created or not.
@@ -78,6 +82,9 @@ class Elb:
         """
         for lb in self.elbv2_client.describe_load_balancers()['LoadBalancers']:
             if name == lb['LoadBalancerName']:
+                for tg in self.elbv2_client.describe_target_groups()['TargetGroups']:
+                    if "QubeTG" == tg['TargetGroupName']:
+                        self.target_group_arn = tg['TargetGroupArn']
                 return False
         else:
             return True
