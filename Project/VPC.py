@@ -9,18 +9,24 @@ class Vpc:
         self.ec2_resource = ec2_resource 
         self.ec2_client = ec2_client
 
-    def create_virtual_private_cloud(self, tags: list, cidr: str) -> None:
+    def create_virtual_private_cloud(self, tags: list, cidr: str) -> str:
         """This method creates virtual private cloud with given tags and cidr range.
 
         Args:
             tags (list): tags to add to the vpc
             cidr (str): CIDR block
+
+        Returns:
+            str: Returns the VPC id.
         """
         if self.check_virtual_private_cloud(tags, cidr):
             self.myvpc = self.ec2_resource.create_vpc(CidrBlock=cidr)
             self.myvpc.create_tags(Tags=tags)
             self.myvpc.wait_until_available()
             self.myvpc_id = self.myvpc.id
+            return self.myvpc_id
+        else:
+            return self.myvpc_id
 
     def check_virtual_private_cloud(self, tags: list, cidr: str) -> bool:
         """This method checks if the virtual private cloud exists with given name and tags.
@@ -278,6 +284,8 @@ class Vpc:
                 ]
             )
             return self.group_id
+        else:
+            return self.group_id
 
     
     def check_alb_security_group(self, name: str) -> bool:
@@ -332,6 +340,8 @@ class Vpc:
                     }
                 ]
             )
+            return self.asg_sgid
+        else:
             return self.asg_sgid
     
     def check_asg_security_group(self, name: str) -> bool:
