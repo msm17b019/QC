@@ -16,6 +16,9 @@ class Ec2:
             tags (list): tags to add to the launch template.
             sg (list): security groups.
             pvt_sub (str): private subnet.
+
+        Returns:
+            str: Return launch template id.
         """
         if self.check_launch_template(name):
             self.lt = self.ec2_client.create_launch_template(
