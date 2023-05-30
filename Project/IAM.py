@@ -7,12 +7,15 @@ class Iam:
         """
         self.iam_client = iam_client
 
-    def create_instance_profile(self, name: str, tags: list):
+    def create_instance_profile(self, name: str, tags: list) -> str:
         """This method creates an IAM instance profile.
 
         Args:
             name (str): Name of the instance profile.
             tags (list): tags to add to the instance profile.
+
+        Returns:
+            str: Return the instance profile id.
         """
         if self.check_instance_profile(name):
             self.ip = self.iam_client.create_instance_profile(
@@ -21,7 +24,8 @@ class Iam:
             )
 
             self.iam_role_name = self.ip['InstanceProfile']['Roles']['RoleName']
-            return self.ip['InstanceProfile']
+            self.ip_id = self.ip['InstanceProfile']['InstanceProfileId']
+        return self.ip_id
 
     def check_instance_profile(self, name: str) -> bool:
         """This method checks if instance profile exists with the given name.
@@ -35,6 +39,7 @@ class Iam:
         for ip in self.iam_client.list_instance_profiles(PathPrefix='/')['InstanceProfiles']:
             if name == ip['InstanceProfileName']:
                 self.iam_role_name = ip['Roles']['RoleName']
+                self.ip_id = ip['InstanceProfileId']
                 return False
         else:
             return True
