@@ -118,19 +118,25 @@ class Vpc:
         else:
             return True
         
-    def create_public_subnet(self, cidr: str, availability_zone: str, tags: list) -> None:
+    def create_public_subnet(self, cidr: str, availability_zone: str, tags: list) -> str:
         """This method creates public subnet.
 
         Args:
             cidr (str): The CIDR block of subnet.
             availability_zone (str): Subnet will be created in that AZ.
             tags (list): Tags to add to the subnet.
+
+        Returns:
+            str: Return the public subnet id.
         """
 
         if self.check_public_subnet(tags):
             self.public_subnet = self.ec2_resource.create_subnet(CidrBlock=cidr, VpcId=self.myvpc_id,AvailabilityZone=availability_zone)
             self.public_subnet.create_tags(Tags=tags)
             self.ec2_client.associate_route_table(RouteTableId=self.public_rt_id, SubnetId=self.public_subnet.id)
+            self.pub_subnet_id = self.public_subnet.id
+
+        return self.pub_subnet_id
 
     def check_public_subnet(self, tags: list) -> bool:
         """This method checks if public subnet exists.
@@ -146,6 +152,7 @@ class Vpc:
         for pub_subnet in self.ec2_client.describe_subnets()['Subnets']:
             if pub_subnet['VpcId'] == self.myvpc_id:
                 if tags[0] in pub_subnet['Tags'] and tags[1] in pub_subnet['Tags']:
+                    self.pub_subnet_id = pub_subnet['SubnetId']
                     return False
         else:
             return True
@@ -219,19 +226,25 @@ class Vpc:
         else:
             return True
         
-    def create_private_subnet(self, cidr: str, availability_zone: str, tags: list) -> None:
+    def create_private_subnet(self, cidr: str, availability_zone: str, tags: list) -> str:
         """This method creates private subnet.
 
         Args:
             cidr (str): The CIDR block of subnet.
             availability_zone (str): Subnet will be created in that AZ.
             tags (list): Tags to add to the subnet.
+
+        Returns:
+            str: Return the private subnet id.
         """
 
         if self.check_private_subnet(tags):
             self.private_subnet = self.ec2_resource.create_subnet(CidrBlock=cidr, VpcId=self.myvpc_id,AvailabilityZone=availability_zone)
             self.private_subnet.create_tags(Tags=tags)
             self.ec2_client.associate_route_table(RouteTableId=self.private_rt_id, SubnetId=self.private_subnet.id)
+            self.pvt_subnet_id = self.private_subnet.id
+        
+        return self.pvt_subnet_id
 
     def check_private_subnet(self, tags: list) -> bool:
         """This method checks if private subnet exists.
@@ -247,6 +260,7 @@ class Vpc:
         for private_subnet in self.ec2_client.describe_subnets()['Subnets']:
             if private_subnet['VpcId'] == self.myvpc_id:
                 if tags[0] in private_subnet['Tags'] and tags[1] in private_subnet['Tags']:
+                    self.pvt_subnet_id = private_subnet['SubnetId']
                     return False
         else:
             return True
