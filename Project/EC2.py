@@ -7,7 +7,7 @@ class Ec2:
         """
         self.ec2_client=ec2_client
 
-    def create_launch_template(self, name: str, iam_ip_name: str, tags: list, sg: list, pvt_sub: str):
+    def create_launch_template(self, name: str, iam_ip_name: str, tags: list, sg: list, pvt_sub: str) -> str:
         """This method creates launch template.
 
         Args:
@@ -67,6 +67,8 @@ class Ec2:
             )
 
             self.lt_id = self.lt['LaunchTemplate']['LaunchTemplateId']
+
+        return self.lt_id
 
     def check_launch_template(self, name: str) -> bool:
         """This method checks if launch template exists with the given name.
