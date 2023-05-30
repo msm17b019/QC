@@ -7,7 +7,7 @@ class Asg:
         """
         self.as_client = as_client
 
-    def create_asg(self, name: str, lt_id: str, pvt_sub: str, tg_arn: list, tags: list):
+    def create_asg(self, name: str, lt_id: str, pvt_sub: str, tg_arn: list, tags: list) -> str:
         """This method creates an autoscaling group.
 
         Args:
@@ -15,6 +15,9 @@ class Asg:
             lt_id (str): Id of the launch template.
             pvt_sub (str): Private subnet ID.
             tags (list): Tags to add to the autoscaling group.
+
+        Returns:
+            str: Return the created autoscaling group ARN.
         """
         if self.check_asg(name):
             self.asg = self.as_client.create_auto_scaling_group(
@@ -28,7 +31,9 @@ class Asg:
                 VPCZoneIdentifier=pvt_sub,
                 TargetGroupARNs=tg_arn,
                 Tags=tags,
-        )
+            )
+
+        return self.asg_arn
 
     def check_asg(self, name: str) -> bool:
         """This method checks if the asg exists or not with the given name.
@@ -41,6 +46,7 @@ class Asg:
         """
         for asg in self.as_client.describe_auto_scaling_groups()['AutoScalingGroups']:
             if name == asg['AutoScalingGroupName']:
+                self.asg_arn = asg['AutoScalingGroupARN']
                 return False
         else:
             return True

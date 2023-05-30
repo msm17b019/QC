@@ -14,12 +14,14 @@ class Iam:
             name (str): Name of the instance profile.
             tags (list): tags to add to the instance profile.
         """
-        self.ip = self.iam_client.create_instance_profile(
-            InstanceProfileName=name,
-                Tags=tags           
-        )
+        if self.check_instance_profile(name):
+            self.ip = self.iam_client.create_instance_profile(
+                InstanceProfileName=name,
+                    Tags=tags           
+            )
 
-        self.iam_role_name = self.ip['InstanceProfile']['Roles']['RoleName']
+            self.iam_role_name = self.ip['InstanceProfile']['Roles']['RoleName']
+            return self.ip['InstanceProfile']
 
     def check_instance_profile(self, name: str) -> bool:
         """This method checks if instance profile exists with the given name.
@@ -37,7 +39,7 @@ class Iam:
         else:
             return True
 
-    def create_add_iam_policy_to_role(self, name: str, tags: list, aws_account_id: str, asg_id: str, asg_name: str):
+    def create_add_iam_policy_to_role(self, name: str, tags: list, aws_account_id: str, asg_arn: str, asg_name: str):
         """This method creates and attaches IAM policy to the IAM role.
 
         Args:
@@ -63,7 +65,7 @@ class Iam:
                 "Resource": '*',
                 "Condition": {
                     "StringEquals": {
-                    "aws:SourceArn": f"arn:aws:autoscaling:ap-south-1:{aws_account_id}:autoScalingGroup:{asg_id}:autoScalingGroupName/{asg_name}"
+                    "aws:SourceArn": f"arn:aws:autoscaling:ap-south-1:{aws_account_id}:autoScalingGroup:{asg_arn}:autoScalingGroupName/{asg_name}"
                     }
                 }
                 },
