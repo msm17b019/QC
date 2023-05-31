@@ -23,8 +23,8 @@ class Iam:
                 Tags=tags           
             )
 
-            self.iam_role_name = self.ip['InstanceProfile']['Roles']['RoleName']
-            self.ip_id = self.ip['InstanceProfile']['InstanceProfileId']
+            self.iam_role_name = self.ip['InstanceProfile'][0]['Roles'][0]['RoleName']
+            self.ip_id = self.ip['InstanceProfile'][0]['InstanceProfileId']
         return self.ip_id
 
     def check_instance_profile(self, name: str) -> bool:

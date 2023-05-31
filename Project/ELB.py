@@ -77,7 +77,8 @@ class Elb:
                         'Type': 'forward',
                         'TargetGroupArn': self.target_group_arn
                     }
-                ]
+                ],
+                Priority=1,
             )
         return self.target_group_arn
 
