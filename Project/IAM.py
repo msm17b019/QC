@@ -20,7 +20,7 @@ class Iam:
         if self.check_instance_profile(name):
             self.ip = self.iam_client.create_instance_profile(
                 InstanceProfileName=name,
-                    Tags=tags           
+                Tags=tags           
             )
 
             self.iam_role_name = self.ip['InstanceProfile']['Roles']['RoleName']
