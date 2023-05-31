@@ -39,6 +39,16 @@ class Elb:
                 LoadBalancerArn=self.elb_arn,
                 Protocol='HTTP',
                 Port=80,
+                DefaultActions=[
+                    {
+                        'Type': 'fixed-response',
+                        'FixedResponseConfig': {
+                            'ContentType': 'text/plain',
+                            'StatusCode': '200',
+                            'MessageBody': 'Hello from the Qube Cinema'
+                        }
+                    }
+                ]
             )
             self.listener_arn = response2['Listeners'][0]['ListenerArn']
 
