@@ -33,6 +33,8 @@ class Asg:
                 Tags=tags,
             )
 
+            self.asg_arn = self.asg['AutoScalingGroup']['AutoScalingGroupARN']
+
         return self.asg_arn
 
     def check_asg(self, name: str) -> bool:

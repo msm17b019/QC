@@ -38,7 +38,7 @@ class Iam:
         """
         for ip in self.iam_client.list_instance_profiles(PathPrefix='/')['InstanceProfiles']:
             if name == ip['InstanceProfileName']:
-                self.iam_role_name = ip['Roles']['RoleName']
+                self.iam_role_name = ip['Roles'][0]['RoleName']
                 self.ip_id = ip['InstanceProfileId']
                 return False
         else:
