@@ -37,6 +37,7 @@ class Ec2:
                         },
                     ],
                     'ImageId': 'ami-078efad6f7ec18b8a',
+                    'KeyName': 'QubeKey',
                     'Monitoring': {
                         'Enabled': False
                     },
@@ -85,6 +86,41 @@ class Ec2:
         for lt in self.ec2_client.describe_launch_templates():
             if name == lt['LaunchTemplates']['LaunchTemplateName']:
                 self.lt_id = lt['LaunchTemplates']['LaunchTemplateId']
+                return False
+        else:
+            return True
+        
+    def create_key(self, tags: list) -> None:
+        """This method creates key pair.
+
+        Args:
+            tags (list): Tags to add to the key pair.
+        """
+        if self.check_key_pair():
+            self.kp = self.ec2_client.create_key_pair(
+                KeyName = 'QubeKey',
+                KeyType = 'rsa',
+                KeyFormat = 'pem',
+                TagSpecifications=[
+                        {
+                            'ResourceType': 'key-pair',
+                            'Tags': tags
+                        },
+                    ],
+            )
+
+            # Save the private key to a file
+            with open('QubeKey.pem', 'w') as key_file:
+                key_file.write(self.kp['KeyMaterial'])
+
+    def check_key_pair(self) -> bool:
+        """This method checks if key pair with name QubeKey already exists.
+
+        Returns:
+            bool: Return False if already exists, else True.
+        """
+        for key in self.ec2_client.describe_key_pairs()['KeyPairs']:
+            if "QubeKey" == key['KeyName']:
                 return False
         else:
             return True

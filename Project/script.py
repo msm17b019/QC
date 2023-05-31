@@ -51,6 +51,7 @@ ip_id = qube_iam.create_instance_profile("QubeIP", [{'Key': 'Product', 'Value': 
 
 # EC2 resources
 qube_ec2 = Ec2(ec2_client)
+qube_ec2.create_key([{'Key': 'Product', 'Value': 'challenge'}])
 launch_template_id = qube_ec2.create_launch_template("QubeLT", "QubeIP", [{'Key': 'Product', 'Value': 'challenge'}], [asg_sgid], pvt_sub_1)
 
 # ASG resources
