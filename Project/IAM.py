@@ -1,3 +1,5 @@
+import json
+
 class Iam:
     def __init__(self, iam_client) -> None:
         """Class that represents AWS IAM services.
@@ -39,7 +41,7 @@ class Iam:
             }
             self.role = self.iam_client.create_role(
                 RoleName="QubeRole",
-                AssumeRolePolicyDocument=assume_role_policy_document
+                AssumeRolePolicyDocument=json.dumps(assume_role_policy_document)
             )
 
             self.iam_role_name = "QubeRole"
