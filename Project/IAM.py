@@ -137,7 +137,7 @@ class Iam:
         """
         try:
             for policy in self.iam_client.list_attached_role_policies(RoleName=self.iam_role_name)['AttachedPolicies']:
-                if name in policy['PolicyName']:
+                if name == policy['PolicyName']:
                     return False
             else:
                 return True
