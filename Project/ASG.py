@@ -51,7 +51,7 @@ class Asg:
                 },
             )
 
-            self.asg_arn = self.asg['AutoScalingGroup']['AutoScalingGroupARN']
+        self.check_asg(name)
 
         return self.asg_arn
 
