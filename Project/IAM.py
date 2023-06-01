@@ -117,7 +117,7 @@ class Iam:
 
         self.policy = self.iam_client.create_policy(
             PolicyName=name,
-            PolicyDocument=policy_json,
+            PolicyDocument=json.dumps(policy_json),
             Tags=tags
         )
 
