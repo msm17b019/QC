@@ -29,7 +29,7 @@ class Asg:
                 MaxSize=1,
                 MinSize=1,
                 VPCZoneIdentifier=pvt_sub,
-                TargetGroupARNs=tg_arn,
+                TargetGroupARNs=[tg_arn],
                 Tags=tags,
             )
 
