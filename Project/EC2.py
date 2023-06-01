@@ -30,9 +30,7 @@ class Ec2:
                     'NetworkInterfaces': [
                         {
                             'AssociatePublicIpAddress': False,
-                            'Groups': [
-                                sg,
-                            ],
+                            'Groups': sg,
                             'SubnetId': pvt_sub,
                         },
                     ],
