@@ -23,8 +23,32 @@ class Iam:
                 Tags=tags           
             )
 
-            self.iam_role_name = self.ip['InstanceProfile'][0]['Roles'][0]['RoleName']
-            self.ip_id = self.ip['InstanceProfile'][0]['InstanceProfileId']
+            self.ip_id = self.ip['InstanceProfile']['InstanceProfileId']
+
+            assume_role_policy_document = {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": "ec2.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            }
+            self.role = self.iam_client.create_role(
+                RoleName="QubeRole",
+                AssumeRolePolicyDocument=assume_role_policy_document
+            )
+
+            self.iam_role_name = "QubeRole"
+
+            self.iam_client.add_role_to_instance_profile(
+                InstanceProfileName=name,
+                RoleName="QubeRole"
+            )
+
         return self.ip_id
 
     def check_instance_profile(self, name: str) -> bool:
