@@ -41,8 +41,8 @@ class Asg:
                                         'Max': 2
                                     },
                                     'MemoryMiB': {
-                                        'Min': 4000,
-                                        'Max': 4200
+                                        'Min': 4096,
+                                        'Max': 4096
                                     },
                                 }
                             },
