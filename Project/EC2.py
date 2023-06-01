@@ -46,9 +46,7 @@ class Ec2:
                             'Tags': tags
                         },
                     ],
-                    'SecurityGroupIds': [
-                        sg,
-                    ],
+                    'SecurityGroupIds': sg,
                     'InstanceRequirements': {
                         'VCpuCount': {
                             'Min': 2,
