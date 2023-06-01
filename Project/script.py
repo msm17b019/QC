@@ -52,11 +52,11 @@ ip_id = qube_iam.create_instance_profile("QubeIP", [{'Key': 'Product', 'Value': 
 # EC2 resources
 qube_ec2 = Ec2(ec2_client)
 qube_ec2.create_key([{'Key': 'Product', 'Value': 'challenge'}])
-launch_template_id = qube_ec2.create_launch_template("QubeLT", "QubeIP", [{'Key': 'Product', 'Value': 'challenge'}], [asg_sgid], pvt_sub_1)
+launch_template_id = qube_ec2.create_launch_template("QubeLT", "QubeIP", [{'Key': 'Product', 'Value': 'challenge'}], [asg_sgid])
 
 # ASG resources
 qube_asg = Asg(as_client)
-asg_arn = qube_asg.create_asg("QubeASG", launch_template_id, pvt_sub_1, tg_arn, [{'Key': 'Product', 'Value': 'challenge'}])
+asg_arn = qube_asg.create_asg("QubeASG", launch_template_id, pvt_sub_1, [tg_arn], [{'Key': 'Product', 'Value': 'challenge'}])
 
 # IAM resources
 qube_iam.create_add_iam_policy_to_role("QubePolicy", [{'Key': 'Product', 'Value': 'challenge'}], "461338057834", asg_arn, "QubeASG")

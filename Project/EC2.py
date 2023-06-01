@@ -7,7 +7,7 @@ class Ec2:
         """
         self.ec2_client=ec2_client
 
-    def create_launch_template(self, name: str, iam_ip_name: str, tags: list, sg: list, pvt_sub: str) -> str:
+    def create_launch_template(self, name: str, iam_ip_name: str, tags: list, sg: list) -> str:
         """This method creates launch template.
 
         Args:
@@ -15,7 +15,6 @@ class Ec2:
             iam_ip_name (str): IAM instance profile.
             tags (list): tags to add to the launch template.
             sg (list): security groups.
-            pvt_sub (str): private subnet.
 
         Returns:
             str: Return launch template id.
@@ -27,25 +26,12 @@ class Ec2:
                     'IamInstanceProfile': {
                         'Name': iam_ip_name
                     },
-                    'NetworkInterfaces': [
-                        {
-                            'AssociatePublicIpAddress': False,
-                            'Groups': sg,
-                            'SubnetId': pvt_sub,
-                        },
-                    ],
                     'ImageId': 'ami-078efad6f7ec18b8a',
                     'KeyName': 'QubeKey',
                     'Monitoring': {
                         'Enabled': False
                     },
                     'UserData': 'IyEvYmluL2Jhc2gKeXVtIHVwZGF0ZSAteQp5dW0gaW5zdGFsbCAteSBodHRwZAplY2hvICJoZWxsb3dvcmxkIiA+IC9vcHQvbGF1bmNoZmlsZQplY2hvICJIZWxsbyB3b3JsZCBweXRob24iID4gL3Zhci93d3cvaHRtbC9pbmRleC5odG1sCnNlcnZpY2UgaHR0cGQgc3RhcnQK',
-                    'TagSpecifications': [
-                        {
-                            'ResourceType': 'launch-template',
-                            'Tags': tags
-                        },
-                    ],
                     'SecurityGroupIds': sg,
                 },
                 TagSpecifications=[

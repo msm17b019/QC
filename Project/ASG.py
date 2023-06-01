@@ -22,15 +22,33 @@ class Asg:
         if self.check_asg(name):
             self.asg = self.as_client.create_auto_scaling_group(
                 AutoScalingGroupName=name,
-                LaunchTemplate={
-                    'LaunchTemplateId': lt_id,
-                    'Version': '$Latest',
-                },
                 MaxSize=1,
                 MinSize=1,
                 VPCZoneIdentifier=pvt_sub,
-                TargetGroupARNs=[tg_arn],
+                TargetGroupARNs=tg_arn,
                 Tags=tags,
+                MixedInstancesPolicy={
+                    'LaunchTemplate': {
+                        'LaunchTemplateSpecification': {
+                            'LaunchTemplateId': lt_id,
+                            'Version': '$Latest'
+                        },
+                        'Overrides': [
+                            {
+                                'InstanceRequirements': {
+                                    'VCpuCount': {
+                                        'Min': 2,
+                                        'Max': 2
+                                    },
+                                    'MemoryMiB': {
+                                        'Min': 4000,
+                                        'Max': 4200
+                                    },
+                                }
+                            },
+                        ]
+                    },
+                },
             )
 
             self.asg_arn = self.asg['AutoScalingGroup']['AutoScalingGroupARN']
