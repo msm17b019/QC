@@ -70,15 +70,13 @@ class Iam:
         else:
             return True
 
-    def create_add_iam_policy_to_role(self, name: str, tags: list, aws_account_id: str, asg_arn: str, asg_name: str):
+    def create_add_iam_policy_to_role(self, name: str, tags: list, asg_arn: str):
         """This method creates and attaches IAM policy to the IAM role.
 
         Args:
             name (str): Name of the IAM policy.
             tags (list): Tags to add to the IAM policy.
-            aws_account_id (str): AWS account ID.
-            asg_id (str): Auto scaling group ID.
-            asg_name (str): Auto scaling group name.
+            asg_arn (str): Auto scaling group arn.
         """
         policy_json = {
             "Version": "2012-10-17",
@@ -95,8 +93,8 @@ class Iam:
                 ],
                 "Resource": '*',
                 "Condition": {
-                    "StringEquals": {
-                    "aws:SourceArn": f"arn:aws:autoscaling:ap-south-1:{aws_account_id}:autoScalingGroup:{asg_arn}:autoScalingGroupName/{asg_name}"
+                    "ArnEquals": {
+                    "aws:SourceArn": f"{asg_arn}"
                     }
                 }
                 },

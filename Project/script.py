@@ -59,4 +59,4 @@ qube_asg = Asg(as_client)
 asg_arn = qube_asg.create_asg("QubeASG", launch_template_id, pvt_sub_1, [tg_arn], [{'Key': 'Product', 'Value': 'challenge'}])
 
 # IAM resources
-qube_iam.create_add_iam_policy_to_role("QubePolicy", [{'Key': 'Product', 'Value': 'challenge'}], "461338057834", asg_arn, "QubeASG")
+qube_iam.create_add_iam_policy_to_role("QubePolicy", [{'Key': 'Product', 'Value': 'challenge'}], asg_arn)
