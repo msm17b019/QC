@@ -83,9 +83,9 @@ class Ec2:
         Returns:
             bool: Return False if launch template with the given name exists, else True.
         """
-        for lt in self.ec2_client.describe_launch_templates():
-            if name == lt['LaunchTemplates']['LaunchTemplateName']:
-                self.lt_id = lt['LaunchTemplates']['LaunchTemplateId']
+        for lt in self.ec2_client.describe_launch_templates()['LaunchTemplates']:
+            if name == lt['LaunchTemplateName']:
+                self.lt_id = lt['LaunchTemplateId']
                 return False
         else:
             return True
