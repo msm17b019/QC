@@ -47,16 +47,6 @@ class Ec2:
                         },
                     ],
                     'SecurityGroupIds': sg,
-                    'InstanceRequirements': {
-                        'VCpuCount': {
-                            'Min': 2,
-                            'Max': 2
-                        },
-                        'MemoryMiB': {
-                            'Min': 4000,
-                            'Max': 4200
-                        },
-                    },
                 },
                 TagSpecifications=[
                     {
