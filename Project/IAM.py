@@ -25,6 +25,9 @@ class Iam:
                 Tags=tags           
             )
 
+            waiter = self.iam_client.get_waiter('instance_profile_exists')
+            waiter.wait(InstanceProfileName=name)
+
             self.ip_id = self.ip['InstanceProfile']['InstanceProfileId']
 
             assume_role_policy_document = {
