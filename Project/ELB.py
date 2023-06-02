@@ -69,7 +69,7 @@ class Elb:
                     {
                         'Field': 'path-pattern',
                         'Values': [
-                            '/worldsogood'
+                            '/worldsogood/'
                         ]
                     }
                 ],

@@ -31,7 +31,7 @@ class Ec2:
                     'Monitoring': {
                         'Enabled': False
                     },
-                    'UserData': 'IyEvYmluL2Jhc2gKeXVtIHVwZGF0ZSAteQp5dW0gaW5zdGFsbCAteSBodHRwZAplY2hvICJoZWxsb3dvcmxkIiA+IC9vcHQvbGF1bmNoZmlsZQplY2hvICJIZWxsbyB3b3JsZCBweXRob24iID4gL3Zhci93d3cvaHRtbC9pbmRleC5odG1sCnNlcnZpY2UgaHR0cGQgc3RhcnQK',
+                    'UserData': 'IyEvYmluL2Jhc2gKeXVtIGluc3RhbGwgaHR0cGQgLXkKc2VydmljZSBodHRwZCBzdGFydApjaGtjb25maWcgaHR0cGQgb24KbWtkaXIgLXAgL3Zhci93d3cvaHRtbC93b3JsZHNvZ29vZAplY2hvICJIZWxsbyB3b3JsZCBweXRob24iID4gL3Zhci93d3cvaHRtbC93b3JsZHNvZ29vZC9pbmRleC5odG1sCg==',
                     'SecurityGroupIds': sg,
                 },
                 TagSpecifications=[
