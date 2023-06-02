@@ -96,7 +96,7 @@ class Iam:
                     "kms:DescribeKey",
                     "kms:ListKeys"
                 ],
-                "Resource": '*'
+                "Resource": "*"
                 }
             ]
             }
