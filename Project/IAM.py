@@ -44,7 +44,8 @@ class Iam:
             }
             self.role = self.iam_client.create_role(
                 RoleName="QubeRole",
-                AssumeRolePolicyDocument=json.dumps(assume_role_policy_document)
+                AssumeRolePolicyDocument=json.dumps(assume_role_policy_document),
+                Tags=tags
             )
 
             self.iam_role_name = "QubeRole"
