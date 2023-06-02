@@ -86,7 +86,7 @@ class Iam:
             "Version": "2012-10-17",
             "Statement": [
                 {
-                "Sid": "AllowAccessFromASG",
+                "Sid": "AllowAccessToKMS",
                 "Effect": "Allow",
                 "Action": [
                     "kms:Encrypt",
@@ -94,23 +94,7 @@ class Iam:
                     "kms:ReEncrypt*",
                     "kms:GenerateDataKey*",
                     "kms:DescribeKey",
-                ],
-                "Resource": '*',
-                "Condition": {
-                    "ArnEquals": {
-                    "aws:SourceArn": f"{asg_arn}"
-                    }
-                }
-                },
-                {
-                "Sid": "DenyAccessFromOtherEntities",
-                "Effect": "Deny",
-                "Action": [
-                    "kms:Encrypt",
-                    "kms:Decrypt",
-                    "kms:ReEncrypt*",
-                    "kms:GenerateDataKey*",
-                    "kms:DescribeKey"
+                    "kms:ListKeys"
                 ],
                 "Resource": '*'
                 }
