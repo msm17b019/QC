@@ -69,7 +69,7 @@ class Elb:
                     {
                         'Field': 'path-pattern',
                         'Values': [
-                            f'{self.elb_dns_name}/worldsogood'
+                            '/worldsogood'
                         ]
                     }
                 ],
