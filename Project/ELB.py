@@ -48,7 +48,8 @@ class Elb:
                             'MessageBody': 'Hello from the Qube Cinema'
                         }
                     }
-                ]
+                ],
+                Tags=tags
             )
             self.listener_arn = response2['Listeners'][0]['ListenerArn']
 
@@ -79,6 +80,7 @@ class Elb:
                     }
                 ],
                 Priority=5,
+                Tags=tags
             )
         return self.target_group_arn
 
