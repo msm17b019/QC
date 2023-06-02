@@ -68,7 +68,7 @@ class Elb:
                     {
                         'Field': 'path-pattern',
                         'Values': [
-                            f'{self.elb_dns_name}/worldsogood'
+                            '/worldsogood'
                         ]
                     }
                 ],
@@ -78,7 +78,7 @@ class Elb:
                         'TargetGroupArn': self.target_group_arn
                     }
                 ],
-                Priority=1,
+                Priority=5,
             )
         return self.target_group_arn
 

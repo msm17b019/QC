@@ -116,16 +116,17 @@ class Iam:
             ]
             }
 
-        self.policy = self.iam_client.create_policy(
-            PolicyName=name,
-            PolicyDocument=json.dumps(policy_json),
-            Tags=tags
-        )
+        if self.check_iam_policy(name):
+            self.policy = self.iam_client.create_policy(
+                PolicyName=name,
+                PolicyDocument=json.dumps(policy_json),
+                Tags=tags
+            )
 
-        self.iam_client.attach_role_policy(
-            RoleName=self.iam_role_name,
-            PolicyArn=self.policy['Policy']['Arn']
-        )
+            self.iam_client.attach_role_policy(
+                RoleName=self.iam_role_name,
+                PolicyArn=self.policy['Policy']['Arn']
+            )
     
     def check_iam_policy(self, name: str) -> bool :
         """This method checks if IAM policy is attached to IAM role.
